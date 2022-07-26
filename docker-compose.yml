@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: 'nginx:latest'
+    volumes:
+      - ./:/srv
+    ports:
+      - "8443:8443"
+    environment:
+      - env=dev
+    container_name: nginx
