@@ -4,6 +4,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && \
 	apt-get install -y git make gcc curl zlib1g-dev libpcre3-dev vim
 
 WORKDIR /build
+ENV BUILD_DIR /build
 
 RUN git clone -b OpenSSL_1_1_1-stable https://github.com/openssl/openssl && \
     git clone -b release-1.23.0 https://github.com/nginx/nginx  && \
@@ -15,6 +16,9 @@ RUN git clone -b OpenSSL_1_1_1-stable https://github.com/openssl/openssl && \
     git clone -b v0.62 https://github.com/openresty/echo-nginx-module
 
 
+RUN cd ${BUILD_DIR}/LuaJIT && \
+	make PREFIX=${BUILD_DIR}/LuaJIT && \
+	make install PREFIX=${BUILD_DIR}/ngx_lib
 #RUN make patch && \
 #    make build && \
 #    mkdir logs
