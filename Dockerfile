@@ -6,14 +6,14 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && \
 WORKDIR /build
 ENV BUILD_DIR /build
 
-RUN git clone -b OpenSSL_1_1_1-stable https://github.com/openssl/openssl && \
-    git clone -b release-1.23.0 https://github.com/nginx/nginx  && \
-    git clone -b v0.3.0 https://github.com/phuslu/nginx-ssl-fingerprint && \
-    git clone -b v0.10.21  https://github.com/openresty/lua-nginx-module && \
-    git clone -b v0.3.1 https://github.com/vision5/ngx_devel_kit && \
-    git clone -b v2.1 https://github.com/LuaJIT/LuaJIT && \
-    git clone -b v0.07 https://github.com/openresty/lua-upstream-nginx-module && \
-    git clone -b v0.62 https://github.com/openresty/echo-nginx-module
+RUN git clone --depth=1 -b OpenSSL_1_1_1-stable https://github.com/openssl/openssl && \
+    git clone --depth=1 -b release-1.23.0 https://github.com/nginx/nginx  && \
+    git clone --depth=1 -b v0.3.0 https://github.com/phuslu/nginx-ssl-fingerprint && \
+    git clone --depth=1 -b v0.10.21  https://github.com/openresty/lua-nginx-module && \
+    git clone --depth=1 -b v0.3.1 https://github.com/vision5/ngx_devel_kit && \
+    git clone --depth=1 -b v2.1 https://github.com/LuaJIT/LuaJIT && \
+    git clone --depth=1 -b v0.07 https://github.com/openresty/lua-upstream-nginx-module && \
+    git clone --depth=1 -b v0.62 https://github.com/openresty/echo-nginx-module
 
 
 RUN cd ${BUILD_DIR}/LuaJIT && \
