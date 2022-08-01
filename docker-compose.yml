@@ -10,7 +10,7 @@ services:
       - ./:/srv/nginx
       - ./conf/conf.d/:/usr/local/openresty/nginx/conf/conf.d
       - ./conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
-      - ./lua/:/usr/local/openresty/nginx/lua
+      - ./resty/:/usr/local/openresty/nginx/resty
       - /srv/letsencrypt:/srv/letsencrypt
     ports:
       - "443:443"

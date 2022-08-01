@@ -27,6 +27,7 @@ WORKDIR  /build/openresty-${VERSION}
 RUN ./configure -j2 \
 	--with-openssl=./bundle/openssl \
 	--add-module=./bundle/nginx-ssl-fingerprint
+	#--add-module=./bundle/headers-more-nginx-module-0.33
 
 RUN make -j2 && make install
 
