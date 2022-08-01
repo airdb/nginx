@@ -13,3 +13,15 @@ services:
     environment:
       - env=dev
     container_name: nginx
+  certbot:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.certbot
+    image: 'certbot:latest'
+    volumes:
+      - ./:/srv/certbot
+      - /srv/letsencrypt:/etc/letsencrypt
+      - .dnspod.ini:/srv/dnspod.ini
+    environment:
+      - env=dev
+    container_name: certbot
