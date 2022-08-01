@@ -27,7 +27,7 @@ build: ## Configure & Build nginx
 			make
 
 docker: ## Create and start containers
-	docker compose build --no-cache
+	docker compose build #--no-cache
 	docker compose up -d --force-recreate
 
 bash: ## Execute a command in a running container

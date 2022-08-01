@@ -6,31 +6,35 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && \
 WORKDIR /build
 ENV BUILD_DIR /build
 ENV VERSION 1.21.4.1
+ENV NGINXVERSION 1.21.4
 
-RUN wget https://openresty.org/download/openresty-${VERSION}.tar.gz && \
-    git clone --depth=1 -b OpenSSL_1_1_1-stable https://github.com/openssl/openssl && \
-    git clone --depth=1 -b v0.3.0 https://github.com/phuslu/nginx-ssl-fingerprint && \
-    git clone --depth=1 -b v0.3.1 https://github.com/vision5/ngx_devel_kit && \
-    git clone --depth=1 -b v0.07 https://github.com/openresty/lua-upstream-nginx-module && \
-    git clone --depth=1 -b v0.62 https://github.com/openresty/echo-nginx-module
+RUN wget https://openresty.org/download/openresty-${VERSION}.tar.gz && tar xvf openresty-${VERSION}.tar.gz
 
 
-#RUN cd ${BUILD_DIR}/LuaJIT && \
-#	make PREFIX=${BUILD_DIR}/LuaJIT && \
-#	make install PREFIX=${BUILD_DIR}/ngx_lib
-#RUN make patch && \
-#    make build && \
-#    mkdir logs
 
-RUN tar xvf openresty-${VERSION}.tar.gz && \
-	cd openresty-${VERSION} && \
-	./configure -j2 \
-		--with-openssl=${BUILD_DIR}/openssl && \
-	make -j2 && \
+RUN cd openresty-${VERSION}/bundle/ && \
+	git clone --depth=1 -b OpenSSL_1_1_1-stable https://github.com/openssl/openssl && 	\
+    	git clone --depth=1 -b v0.3.0 https://github.com/phuslu/nginx-ssl-fingerprint && \
+    	git clone --depth=1 -b v0.3.1 https://github.com/vision5/ngx_devel_kit && \
+    	git clone --depth=1 -b v0.07 https://github.com/openresty/lua-upstream-nginx-module && \
+    	git clone --depth=1 -b v0.62 https://github.com/openresty/echo-nginx-module && \
+	patch -p1 -d openssl < nginx-ssl-fingerprint/patches/openssl.1_1_1.patch && \
+	patch -p1 -d nginx-${NGINXVERSION} < nginx-ssl-fingerprint/patches/nginx.patch
 
+
+WORKDIR  /build/openresty-${VERSION}
+
+RUN ./configure -j2 \
+	--with-openssl=./bundle/openssl \
+	--add-module=./bundle/nginx-ssl-fingerprint
+
+RUN make -j2 && make install
+
+WORKDIR /usr/local/openresty/nginx
 
 EXPOSE 443
 EXPOSE 8444
 
 #CMD ./nginx/objs/nginx -p /build -c nginx-ssl-fingerprint/conf/nginx.conf
-CMD sleep 3600
+CMD /usr/local/openresty/bin/openresty -c /usr/local/openresty/nginx/conf/nginx.conf -g  'daemon off;'
+#CMD sleep 3600000000
