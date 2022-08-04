@@ -1,23 +1,24 @@
-ngx.say(ngx.var.http_user_agent)
-ngx.say(ngx.var.http_ssl_ja3)
-ngx.say(ngx.var.http_ssl_ja3_hash)
-ngx.say(ngx.var.http_ssl_greased)
+local uuid = require "resty.lib.jit-uuid"
 
+request_id = uuid.generate_v4()
 
-local city = require("resty.ipdb.city")
-ipdb = city:new("/srv/nginx/ipv4_en.ipdb")
-cjson = require("cjson")
-
-
-cip = ngx.var.remote_addr
-ngx.say(cip)
-local loc = ipdb:find(cip, "EN");
-
+ngx.say("request_id", request_id)
 --[[
- local loc = ipdb:find("8.8.8.8", "EN");
---]]
+local redis = require "resty.redis"
+local red = redis:new()
+red:set_timeouts(1000, 1000, 1000)
 
-ngx.say(loc.idc);
-ngx.say(cjson.encode(loc));
---[[
+
+local ok, err = red:connect("127.0.0.1", 6379)
+if not ok then
+    ngx.say("failed to connect: ", err)
+    return
+end
+
+
+ok, err = red:set("dog", "an animal")
+if not ok then
+    ngx.say("failed to set dog: ", err)
+    return
+end
 --]]

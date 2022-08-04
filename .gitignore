@@ -1,2 +1,4 @@
 .dnspod.ini
 ipv4_en.ipdb
+resty/resty.conf
+resty/resty.ini

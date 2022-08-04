@@ -14,7 +14,7 @@ RUN wget https://openresty.org/download/openresty-${VERSION}.tar.gz && tar xvf o
 
 RUN cd openresty-${VERSION}/bundle/ && \
 	git clone --depth=1 -b OpenSSL_1_1_1-stable https://github.com/openssl/openssl && 	\
-    	git clone --depth=1 -b v0.3.0 https://github.com/phuslu/nginx-ssl-fingerprint && \
+    	git clone --depth=1 -b v0.4.0 https://github.com/phuslu/nginx-ssl-fingerprint && \
     	git clone --depth=1 -b v0.3.1 https://github.com/vision5/ngx_devel_kit && \
     	git clone --depth=1 -b v0.07 https://github.com/openresty/lua-upstream-nginx-module && \
     	git clone --depth=1 -b v0.62 https://github.com/openresty/echo-nginx-module && \
