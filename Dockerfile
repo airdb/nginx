@@ -11,18 +11,19 @@ ENV NGINXVERSION 1.21.4
 RUN wget https://openresty.org/download/openresty-${VERSION}.tar.gz && tar xvf openresty-${VERSION}.tar.gz
 
 
+WORKDIR  /build/openresty-${VERSION}
 
-RUN cd openresty-${VERSION}/bundle/ && \
+RUN cd bundle/ && \
 	git clone --depth=1 -b OpenSSL_1_1_1-stable https://github.com/openssl/openssl && 	\
-    	git clone --depth=1 -b v0.4.0 https://github.com/phuslu/nginx-ssl-fingerprint && \
     	git clone --depth=1 -b v0.3.1 https://github.com/vision5/ngx_devel_kit && \
     	git clone --depth=1 -b v0.07 https://github.com/openresty/lua-upstream-nginx-module && \
-    	git clone --depth=1 -b v0.62 https://github.com/openresty/echo-nginx-module && \
+    	git clone --depth=1 -b v0.62 https://github.com/openresty/echo-nginx-module
+
+RUN pwd && ls && ls && cd bundle/ && \
+    	git clone --depth=1 -b dean/fix-issue https://github.com/phuslu/nginx-ssl-fingerprint && \
 	patch -p1 -d openssl < nginx-ssl-fingerprint/patches/openssl.1_1_1.patch && \
 	patch -p1 -d nginx-${NGINXVERSION} < nginx-ssl-fingerprint/patches/nginx.patch
 
-
-WORKDIR  /build/openresty-${VERSION}
 
 RUN ./configure -j2 \
 	--with-openssl=./bundle/openssl \

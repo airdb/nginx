@@ -3,14 +3,22 @@ resp = {}
 resp.http_ssl_ja3 = ngx.var.http_ssl_ja3
 resp.http_ssl_ja3_hash = ngx.var.http_ssl_ja3_hash
 resp.http_ssl_greased = ngx.var.http_ssl_greased
-resp.user_agent = ngx.var.http_user_agent
 resp.remote_addr = ngx.var.remote_addr
 resp.http2_fingerprint = ngx.var.http2_fingerprint
 resp.http2_fingerprint =  "http2_fingerprint"
 resp.request_id = request_id
+resp.user_agent = ""
+resp.host = ""
 resp.request_uri = ngx.var.request_uri
 resp.query_string = ""
 
+if ngx.var.http_user_agent ~= nil then
+   resp.user_agent = ngx.var.http_user_agent
+end
+ 
+if ngx.var.host ~= nil then
+   resp.host = ngx.var.host
+end
 
 if ngx.var.query_string ~= nil then
    resp.query_string = ngx.var.query_string
@@ -66,7 +74,7 @@ end
 
 
 -- insert
-local insert_sql = "insert into tab_ssl_fingerprint (created_at, updated_at, client_ip, request_uri, query_string, fp_http2, fp_ja3, fp_ja3_hash, user_agent) values(now(), now(),'"..resp.remote_addr.."', '"..resp.request_uri.."', '"..resp.query_string.."', '"..resp.http2_fingerprint.."', '"..resp.http_ssl_ja3.."', '"..resp.http_ssl_ja3_hash.."', '"..resp.user_agent.."')"
+local insert_sql = "insert into tab_ssl_fingerprint (created_at, updated_at, client_ip, host, request_uri, query_string, fp_http2, fp_ja3, fp_ja3_hash, user_agent) values(now(), now(),'"..resp.remote_addr.."', '"..resp.host.."', '"..resp.request_uri.."', '"..resp.query_string.."', '"..resp.http2_fingerprint.."', '"..resp.http_ssl_ja3.."', '"..resp.http_ssl_ja3_hash.."', '"..resp.user_agent.."')"
 
 res, err, errno, sqlstate = db:query(insert_sql)
 -- ngx.say(insert_sql)
