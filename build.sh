@@ -4,6 +4,20 @@ BUILD_DIR=/build
 
 cd ${BUILD_DIR}
 
+
+OPENSSL_VERSION=OpenSSL_1_1_1-stable
+NGINX_VERSION=release-1.23.1
+
+
+function download() {
+    git clone -b ${OPENSSL_VERSION} --depth=1 https://github.com/openssl/openssl && \
+    git clone -b ${NGINX_VERSION} --depth=1 https://github.com/nginx/nginx && \
+    git clone -b master  https://github.com/ip2location/ip2location-nginx && \
+    git clone -b master https://github.com/ipipdotnet/nginx-ipip-module && \
+    git clone -b master https://github.com/openresty/openresty && \
+    git clone -b master https://github.com/chrislim2888/IP2Location-C-Library
+}
+
 function build_luajit() {
     cd ${BUILD_DIR}/LuaJIT && make clean && rm -rf ${BUILD_DIR}/ngx_lib && mkdir ${BUILD_DIR}/ngx_lib
 
@@ -22,22 +36,34 @@ export LUAJIT_LIB=${BUILD_DIR}/ngx_lib/lib
 export LUAJIT_INC=${BUILD_DIR}/ngx_lib/include/luajit-2.1
 
 ## Patch
-patch -f -p1 -d openssl < nginx-ssl-fingerprint/patches/openssl.1_1_1.patch
-patch -f -p1 -d nginx < nginx-ssl-fingerprint/patches/nginx.patch
+function patch() {
+	patch -f -p1 -d openssl < nginx-ssl-fingerprint/patches/openssl.1_1_1.patch
+	patch -f -p1 -d nginx < nginx-ssl-fingerprint/patches/nginx.patch
+}
 
-## Build Nginx
-cd /build/nginx && \
-			ASAN_OPTIONS=symbolize=1 ./auto/configure \
-			--with-http_ssl_module \
-			--with-stream_ssl_module \
-			--with-debug --with-stream \
-			--with-http_v2_module \
-			--with-cc-opt="-fsanitize=address -O -fno-omit-frame-pointer" \
-			--with-ld-opt="-L/usr/local/lib -Wl,-E -lasan" \
-			--with-ld-opt="-L${BUILD_DIR}/ngx_lib" \
-			--with-openssl=${BUILD_DIR}/openssl \
-			--add-module=${BUILD_DIR}/ngx_devel_kit \
-			--add-module=${BUILD_DIR}/nginx-ssl-fingerprint \
-			--add-module=${BUILD_DIR}/lua-nginx-module \
-			--add-module=${BUILD_DIR}/lua-upstream-nginx-module && \
-			make
+export LSAN_OPTIONS=verbosity=1:log_threads=1
+			#--with-ld-opt="-L${BUILD_DIR}/ngx_lib" \
+
+function build_deps() {
+	echo build
+}
+
+function build() {
+	## Build Nginx
+	cd /build/nginx && \
+				ASAN_OPTIONS=symbolize=1 ./auto/configure \
+				--with-cc-opt='-m32 -march=i386' \
+				--with-cc-opt="-fsanitize=address -O -fno-omit-frame-pointer" \
+				--with-stream_ssl_module \
+				--with-debug --with-stream \
+				--with-http_ssl_module \
+				--with-http_v2_module \
+				--with-openssl=${BUILD_DIR}/openssl \
+				--add-module=${BUILD_DIR}/ngx_devel_kit \
+				--add-module=${BUILD_DIR}/nginx-ssl-fingerprint \
+				--add-module=${BUILD_DIR}/lua-nginx-module \
+				--add-module=${BUILD_DIR}/lua-upstream-nginx-module && \
+				make
+}
+
+build

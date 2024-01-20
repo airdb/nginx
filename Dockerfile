@@ -1,42 +1,52 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && \
-	apt-get install -y git make gcc curl zlib1g-dev libpcre3-dev vim wget
+ARG DEBIAN_FRONTEND=noninteractive
+ARG OPENSSL_VERSION=OpenSSL_1_1_1-stable
+ARG NGINX_VERSION=release-1.23.1
+
+RUN apt update && \
+    apt install --no-install-recommends -y \
+    vim git curl \
+    wget patch dos2unix mercurial \
+    liblua5.4-dev unzip dh-autoreconf \
+    ca-certificates \
+    make gcc zlib1g-dev libpcre3-dev
+#    rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
+
+
 
 WORKDIR /build
-ENV BUILD_DIR /build
-ENV VERSION 1.21.4.1
-ENV NGINXVERSION 1.21.4
 
-RUN wget https://openresty.org/download/openresty-${VERSION}.tar.gz && tar xvf openresty-${VERSION}.tar.gz
+RUN git clone -b ${OPENSSL_VERSION} --depth=1 https://github.com/openssl/openssl && \
+    git clone -b ${NGINX_VERSION} --depth=1 https://github.com/nginx/nginx && \
+    git clone -b master  https://github.com/ip2location/ip2location-nginx && \
+    git clone -b master https://github.com/ipipdotnet/nginx-ipip-module && \
+    git clone -b master https://github.com/openresty/openresty && \
+    git clone -b master https://github.com/chrislim2888/IP2Location-C-Library
 
-
-WORKDIR  /build/openresty-${VERSION}
-
-RUN cd bundle/ && \
-	git clone --depth=1 -b OpenSSL_1_1_1-stable https://github.com/openssl/openssl && 	\
-    	git clone --depth=1 -b v0.3.1 https://github.com/vision5/ngx_devel_kit && \
-    	git clone --depth=1 -b v0.07 https://github.com/openresty/lua-upstream-nginx-module && \
-    	git clone --depth=1 -b v0.62 https://github.com/openresty/echo-nginx-module
-
-RUN pwd && ls && ls && cd bundle/ && \
-    	git clone --depth=1 -b dean/fix-issue https://github.com/phuslu/nginx-ssl-fingerprint && \
-	patch -p1 -d openssl < nginx-ssl-fingerprint/patches/openssl.1_1_1.patch && \
-	patch -p1 -d nginx-${NGINXVERSION} < nginx-ssl-fingerprint/patches/nginx.patch
+RUN cd IP2Location-C-Library && \
+    autoreconf -i -v --force && \
+    ./configure && \
+    make && \
+    make install
 
 
-RUN ./configure -j2 \
-	--with-openssl=./bundle/openssl \
-	--add-module=./bundle/nginx-ssl-fingerprint
-	#--add-module=./bundle/headers-more-nginx-module-0.33
 
-RUN make -j2 && make install
+WORKDIR /build/openresty
 
-WORKDIR /usr/local/openresty/nginx
+#RUN make && \
+#	cd openresty-1.25.3.1
+#ADD patches/ /build/nginx-ssl-fingerprint/patches/
+#ADD src/ /build/nginx-ssl-fingerprint/src/
+#ADD config nginx.conf /build/nginx-ssl-fingerprint/
 
-EXPOSE 443
-EXPOSE 8444
+#RUN patch -p1 -d openssl < nginx-ssl-fingerprint/patches/openssl.1_1_1.patch && \
+#    patch -p1 -d nginx < nginx-ssl-fingerprint/patches/nginx.patch && \
+#    cd nginx && \
+#    ASAN_OPTIONS=symbolize=1 ./auto/configure --with-openssl=$(pwd)/../openssl --add-module=$(pwd)/../nginx-ssl-fingerprint --with-http_ssl_module --with-stream_ssl_module --with-debug --with-stream --with-cc-opt="-fsanitize=address -O -fno-omit-frame-pointer" --with-ld-opt="-L/usr/local/lib -Wl,-E -lasan" && \
+#    make
 
-#CMD ./nginx/objs/nginx -p /build -c nginx-ssl-fingerprint/conf/nginx.conf
-CMD /usr/local/openresty/bin/openresty -c /usr/local/openresty/nginx/conf/nginx.conf -g  'daemon off;'
-#CMD sleep 3600000000
+#./configure --add-module=/absolute/path/to/nginx-ip2location-master
+
+#CMD ["nginx-debug", "-g", "daemon off;"]
+CMD sleep 3600

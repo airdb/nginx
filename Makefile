@@ -1,6 +1,7 @@
-SERVICE := nginx
+# LABEL Maintainer="airdb team <info@airdb.com>"
+# Description="https://github.com/airdb"
 
-all: help
+SERVICE := nginx
 
 help: ## Show help messages
 	@echo "Container - ${SERVICE} "
@@ -10,25 +11,34 @@ help: ## Show help messages
 	@echo "Commands:"
 	@sed -n '/##/s/\(.*\):.*##/  \1#/p' ${MAKEFILE_LIST} | grep -v "MAKEFILE_LIST" | column -t -c 2 -s '#'
 
-patch: ## patch nginx and openssl
-	patch -p1 -d openssl < nginx-ssl-fingerprint/patches/openssl.1_1_1.patch
-	patch -p1 -d nginx < nginx-ssl-fingerprint/patches/nginx.patch
+build: ## Build or rebuild docker image
+	docker compose build
+	#docker compose build --no-cache
 
-build: ## Configure & Build nginx 
-	cd nginx && \
-			ASAN_OPTIONS=symbolize=1 ./auto/configure \
-			--with-openssl=../openssl \
-			--add-module=../nginx-ssl-fingerprint \
-			--with-http_ssl_module \
-			--with-stream_ssl_module \
-			--with-debug --with-stream \
-			--with-cc-opt="-fsanitize=address -O -fno-omit-frame-pointer" \
-			--with-ld-opt="-L/usr/local/lib -Wl,-E -lasan" && \
-			make
+push: ## Push docker image
+	docker compose push ${SERVICE}
 
-docker: ## Create and start containers
-	docker compose build #--no-cache
+up: ## Create and start containers
 	docker compose up -d --force-recreate
 
+start: ## Start services
+	docker compose start
+
+stop: ## Stop services
+	docker compose stop
+
+restart: ## Restart containers
+	docker compose restart
+
+ps: ## List containers
+	docker compose ps
+
+log logs: ## View output from containers
+	docker compose logs
+
+rm: stop ## Stop and remove stopped service containers
+	docker compose rm ${SERVICE}
+
 bash: ## Execute a command in a running container
-	docker compose exec ${SERVICE} bash
+	docker compose exec ${SERVICE} bash --login
+

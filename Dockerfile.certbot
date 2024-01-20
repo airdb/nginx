@@ -1,7 +1,0 @@
-FROM certbot/certbot:latest
-
-RUN pip install certbot-dnspod
-
-#CMD sleep 3600
-
-ENTRYPOINT ["sleep", "3600"]

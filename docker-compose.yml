@@ -2,30 +2,15 @@ version: '3'
 
 services:
   nginx:
+    platform: linux/amd64
     build:
       context: .
-      dockerfile: ./Dockerfile
-    image: 'nginx:latest'
+      dockerfile: Dockerfile
+    image: 'airdb/nginx:latest'
     volumes:
-      - ./:/srv/nginx
-      - ./conf/conf.d/:/usr/local/openresty/nginx/conf/conf.d
-      - ./conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
-      - ./resty/:/usr/local/openresty/nginx/resty
-      - /srv/letsencrypt:/srv/letsencrypt
+      - ./:/srv
+    environment:
+      - TZ=Asia/Shanghai
     ports:
-      - "443:443"
-    environment:
-      - env=dev
+      - 8080:80
     container_name: nginx
-  certbot:
-    build:
-      context: .
-      dockerfile: ./Dockerfile.certbot
-    image: 'certbot:latest'
-    volumes:
-      - ./:/srv/certbot
-      - /srv/letsencrypt:/etc/letsencrypt
-      - .dnspod.ini:/srv/dnspod.ini
-    environment:
-      - env=dev
-    container_name: certbot
