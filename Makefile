@@ -19,7 +19,7 @@ push: ## Push docker image
 	docker compose push ${SERVICE}
 
 up: ## Create and start containers
-	docker compose up -d --force-recreate
+	docker compose up -d --force-recreate --remove-orphans
 
 start: ## Start services
 	docker compose start

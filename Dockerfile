@@ -17,18 +17,28 @@ RUN apt update && \
 
 WORKDIR /build
 
-RUN git clone -b ${OPENSSL_VERSION} --depth=1 https://github.com/openssl/openssl && \
-    git clone -b ${NGINX_VERSION} --depth=1 https://github.com/nginx/nginx && \
-    git clone -b master  https://github.com/ip2location/ip2location-nginx && \
-    git clone -b master https://github.com/ipipdotnet/nginx-ipip-module && \
-    git clone -b master https://github.com/openresty/openresty && \
+RUN git clone --depth=1 -b ${OPENSSL_VERSION} https://github.com/openssl/openssl && \
+    git clone --depth=1 -b ${NGINX_VERSION} https://github.com/nginx/nginx && \
+    git clone --depth=1 -b master  https://github.com/ip2location/ip2location-nginx && \
+    git clone --depth=1 -b master https://github.com/ipipdotnet/nginx-ipip-module && \
+    git clone --depth=1 -b master https://github.com/openresty/openresty && \
+    git clone --depth=1 -b master --depth=1 https://github.com/phuslu/nginx-ssl-fingerprint && \
+    git clone --depth=1 -b v2.1 https://github.com/LuaJIT/LuaJIT && \
+    git clone --depth=1 -b v0.10.26 https://github.com/openresty/lua-nginx-module && \
+    git clone --depth=1 -b master https://github.com/FRiCKLE/ngx_cache_purge && \
     git clone -b master https://github.com/chrislim2888/IP2Location-C-Library
+
 
 RUN cd IP2Location-C-Library && \
     autoreconf -i -v --force && \
     ./configure && \
     make && \
     make install
+
+RUN cd /build/LuaJIT && \
+    make && \
+    make install
+#   69  make PREFIX=/build/LuaJIT &&  make install PREFIX=/usr/local/lib/
 
 
 

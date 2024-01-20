@@ -7,6 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: 'airdb/nginx:latest'
+    working_dir: /srv
     volumes:
       - ./:/srv
     environment:
