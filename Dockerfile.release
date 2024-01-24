@@ -1,0 +1,22 @@
+FROM airdb/nginx-builder:latest as builder
+
+FROM ubuntu:22.04
+RUN apt update && \
+    apt install --no-install-recommends -y \
+    vim git curl wget \
+    ca-certificates && \
+    rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
+
+COPY --from=builder /etc/nginx /etc/nginx
+COPY --from=builder /usr/sbin/nginx /usr/bin/nginx
+COPY --from=builder /var/log/nginx /var/log/nginx
+COPY --from=builder /var/cache/nginx/client_temp /var/cache/nginx/client_temp
+
+COPY lua /etc/lua
+
+WORKDIR /etc/lua/lib/
+
+RUN git clone --depth=1 -b master https://github.com/ledgetech/lua-resty-http  && \
+	git clone --depth=1 -b master https://github.com/openresty/lua-resty-dns
+
+CMD ["nginx", "-g", "daemon off;"]
