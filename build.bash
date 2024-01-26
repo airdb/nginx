@@ -13,7 +13,23 @@ function patch_openssl() {
 	#git clone -b http2 https://github.com/phuslu/nginx-ssl-fingerprint ${BUILD_DIR}/nginx-ssl-fingerprint
         patch -f -p1 -d /build/openssl < ${BUILD_DIR}/nginx-ssl-fingerprint/patches/openssl.1_1_1.patch
         #patch -f -p1 -d /build/openssl < /build/nginx-ssl-fingerprint/patches/openssl.1_1_1.patch
-        patch -f -p1 -d ${BUNDLE_DIR}/bundle/nginx-1.25.3 < ${BUILD_DIR}/nginx-ssl-fingerprint/patches/openresty_1.25.3.1_nginx.patch
+        #patch -f -p1 -d ${BUNDLE_DIR}/bundle/nginx-1.25.3 < ${BUILD_DIR}/nginx-ssl-fingerprint/patches/openresty_1.25.3.1_nginx.patch
+        patch -f -p1 -d ${BUNDLE_DIR}/bundle/nginx-1.25.3 < /srv/openresty_1.25.3.1_nginx.patch
+}
+
+function replace_nginx_version() {
+	#sed -i 's/ [0-9]\+$/ 1211011/g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/src/core/nginx.h
+	sed -i 's/"[0-9].\+"$/"10.0"/g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/src/core/nginx.h
+	sed -i 's/"nginx\/"/"Microsoft-IIS\/"/g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/src/core/nginx.h
+	sed -i 's/"NGINX"$/"Microsoft-IIS"/g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/src/core/nginx.h
+	sed -i 's/"Server: nginx"/"Server: Microsoft-IIS"/g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/src/http/ngx_http_header_filter_module.c
+	sed -i 's/>nginx</>Microsoft-IIS</g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/src/http/ngx_http_special_response.c
+
+	sed -i 's/"openresty\/"/"Microsoft-IIS\/"/g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/src/core/nginx.h
+	sed -i 's/>openresty</>Microsoft-IIS</g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/src/http/ngx_http_special_response.c
+
+	sed -i 's/nginx\//Microsoft-IIS\//g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/conf/fastcgi.conf
+	sed -i 's/nginx\//Microsoft-IIS\//g' ${BUNDLE_DIR}/bundle/nginx-1.25.3/nginx/conf/fastcgi_params
 }
 
 function build_deps() {
@@ -92,4 +108,5 @@ function build() {
 
 
 patch_openssl
+replace_nginx_version
 build

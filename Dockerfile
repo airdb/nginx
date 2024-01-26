@@ -25,7 +25,7 @@ RUN git clone --depth=1 -b ${OPENSSL_VERSION} --depth=1 https://github.com/opens
     git clone --depth=1 -b ${NGINX_VERSION} --depth=1 https://github.com/nginx/nginx && \
     git clone --depth=1 -b master  https://github.com/ip2location/ip2location-nginx && \
     git clone --depth=1 -b master https://github.com/ipipdotnet/nginx-ipip-module && \
-    git clone --depth=1 -b fix/support_openresty https://github.com/phuslu/nginx-ssl-fingerprint && \
+    git clone --depth=1 -b master https://github.com/phuslu/nginx-ssl-fingerprint && \
     git clone --depth=1 -b master https://github.com/chrislim2888/IP2Location-C-Library
 
 RUN cd IP2Location-C-Library && \
@@ -49,10 +49,8 @@ RUN cd IP2Location-C-Library && \
 
 #./configure --add-module=/absolute/path/to/nginx-ip2location-master
 
-COPY build.sh /tmp/
+COPY build.bash /tmp/
 
-RUN bash /tmp/build.sh
-#CMD ["nginx-debug", "-g", "daemon off;"]
-#CMD sleep 3600
+RUN bash /tmp/build.bash
 CMD ["nginx", "-g", "daemon off;"]
 #CMD sleep 3600

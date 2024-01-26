@@ -1,8 +1,8 @@
 # LABEL Maintainer="airdb team <info@airdb.com>"
 # Description="https://github.com/airdb"
 
-#SERVICE := nginx-builder
-SERVICE := nginx
+SERVICE := nginx-builder
+#SERVICE := nginx
 
 help: ## Show help messages
 	@echo "Container - ${SERVICE} "
@@ -14,7 +14,7 @@ help: ## Show help messages
 
 build: ## Build or rebuild docker image
 	docker compose build
-	#docker compose build --no-cache
+	#docker compose build --no-cache --progress=plain
 
 push: ## Push docker image
 	docker compose push ${SERVICE}
