@@ -12,7 +12,7 @@ services:
     volumes:
       - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./lua:/etc/lua/
+      - ./lua/resty:/etc/lua/resty
       - ./:/srv
     environment:
       - TZ=Asia/Shanghai

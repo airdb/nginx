@@ -13,8 +13,8 @@ function patch_openssl() {
 	#git clone -b http2 https://github.com/phuslu/nginx-ssl-fingerprint ${BUILD_DIR}/nginx-ssl-fingerprint
         patch -f -p1 -d /build/openssl < ${BUILD_DIR}/nginx-ssl-fingerprint/patches/openssl.1_1_1.patch
         #patch -f -p1 -d /build/openssl < /build/nginx-ssl-fingerprint/patches/openssl.1_1_1.patch
-        #patch -f -p1 -d ${BUNDLE_DIR}/bundle/nginx-1.25.3 < ${BUILD_DIR}/nginx-ssl-fingerprint/patches/openresty_1.25.3.1_nginx.patch
-        patch -f -p1 -d ${BUNDLE_DIR}/bundle/nginx-1.25.3 < /srv/openresty_1.25.3.1_nginx.patch
+        patch -f -p1 -d ${BUNDLE_DIR}/bundle/nginx-1.25.3 < ${BUILD_DIR}/nginx-ssl-fingerprint/patches/openresty_1.25.3.1_nginx.patch
+        #patch -f -p1 -d ${BUNDLE_DIR}/bundle/nginx-1.25.3 < /srv/openresty_1.25.3.1_nginx.patch
 }
 
 function replace_nginx_version() {
