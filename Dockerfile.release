@@ -14,9 +14,9 @@ COPY --from=builder /var/cache/nginx/client_temp /var/cache/nginx/client_temp
 
 COPY lua /etc/lua
 
-WORKDIR /etc/lua/lib/
+#WORKDIR /etc/lua/lib/
 
-RUN git clone --depth=1 -b master https://github.com/ledgetech/lua-resty-http  && \
-	git clone --depth=1 -b master https://github.com/openresty/lua-resty-dns
+#RUN git clone --depth=1 -b master https://github.com/ledgetech/lua-resty-http  && \
+#	git clone --depth=1 -b master https://github.com/openresty/lua-resty-dns
 
 CMD ["nginx", "-g", "daemon off;"]
