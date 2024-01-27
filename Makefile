@@ -13,11 +13,9 @@ help: ## Show help messages
 	@sed -n '/##/s/\(.*\):.*##/  \1#/p' ${MAKEFILE_LIST} | grep -v "MAKEFILE_LIST" | column -t -c 2 -s '#'
 
 build: ## Build or rebuild docker image
-	docker compose build --progress=plain
+	docker compose --progress=plain build ${SERVICE} --no-cache
+	#docker compose --progress=plain build nginx-builder --no-cache
 	#docker compose build --no-cache --progress=plain
-
-push: ## Push docker image
-	docker compose push ${SERVICE}
 
 up: ## Create and start containers
 	docker compose up -d --force-recreate --remove-orphans ${SERVICE}
@@ -46,4 +44,7 @@ bash: ## Execute a command in a running container
 release: ## Release nginx
 	docker compose build nginx --no-cache
 	docker compose up -d --force-recreate --remove-orphans nginx
+
+push: ## Push docker image
+	docker compose push nginx
 

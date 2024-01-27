@@ -66,24 +66,38 @@ local start_time = ngx.now() * 1000
 
 -- must setup global dns resover.
 -- nginx config: resolver 8.8.8.8 valid=10s;
-local ok, err = httpc:connect("sg.airdb.host", 8080)
---     local ok, err = httpc:connect("129.226.148.218", 3000)
+-- local server_host = "bumu.fly.dev"
+-- local server_port = 443
+local server_host = "sg.airdb.host"
+local server_port = 8080
+-- 
+local ok, err = httpc:connect(server_host, server_port)
 if not ok then
-     ngx_var.crawler_e = 1
+     ngx_var.check_err = 1
      ngx_log(ERR, "connect failed")
      return
 end
- 
- 
- 
+--  
+--  
 local res, err = httpc:request({
-    path = "/api/v1/sgw/waf/check",
+    path = "/apis/v1/sgw/sec/check",
     method = "POST",
     headers = { ["Content-Type"] = "application/json" },
     body = encode_json(body),
 })
+
+
+-- local url = "https://bumu.fly.dev"
+-- 
+-- local res, err = httpc:request_uri(url, {
+--     path = "/apis/v1/sgw/sec/check",
+--     method = "POST",
+--     headers = { ["Content-Type"] = "application/json" },
+--     body = encode_json(body),
+--     ssl_verify = false
+-- })
 if not res then
-    ngx_var.crawler_e = 1
+    ngx_var.check_err = 1
     httpc:close()
     ngx_log(ERR, "request failed: ", err)
     return
