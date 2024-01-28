@@ -36,9 +36,9 @@ local body = {
   client_ip = ngx.var.remote_addr,
   -- ja3 fingerprint
   -- tls_fingerprint = "tls fp", 
-  tls_fingerprint = ngx_var.http_ssl_ja3, 
+  fingerprint_ja3 = ngx_var.http_ssl_ja3, 
   -- http2 fingerprint
-  akamai_fingerprint = ngx_var.http2_fingerprint,
+  fingerprint_h2 = ngx_var.http2_fingerprint,
   tls_greased = ngx_var.http_ssl_greased,
   device_fingerprint = "device id",
   method = ngx.var.request_method,
@@ -87,10 +87,9 @@ local res, err = httpc:request({
 })
 
 
--- local url = "https://bumu.fly.dev"
+-- local url = "https://bumu.fly.dev/apis/v1/sgw/sec/check"
 -- 
 -- local res, err = httpc:request_uri(url, {
---     path = "/apis/v1/sgw/sec/check",
 --     method = "POST",
 --     headers = { ["Content-Type"] = "application/json" },
 --     body = encode_json(body),

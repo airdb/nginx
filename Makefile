@@ -1,8 +1,8 @@
 # LABEL Maintainer="airdb team <info@airdb.com>"
 # Description="https://github.com/airdb"
 
-SERVICE := nginx-builder
-#SERVICE := nginx
+#SERVICE := nginx-builder
+SERVICE := nginx
 
 help: ## Show help messages
 	@echo "Container - ${SERVICE} "
@@ -18,7 +18,8 @@ build: ## Build or rebuild docker image
 	#docker compose build --no-cache --progress=plain
 
 up: ## Create and start containers
-	docker compose up -d --force-recreate --remove-orphans ${SERVICE}
+	#docker compose up -d --force-recreate --remove-orphans ${SERVICE}
+	docker compose up -d --force-recreate --remove-orphans nginx
 
 start: ## Start services
 	docker compose start
@@ -42,7 +43,8 @@ bash: ## Execute a command in a running container
 	docker compose exec ${SERVICE} bash --login
 
 release: ## Release nginx
-	docker compose build nginx --no-cache
+	docker compose build nginx
+	#docker compose build nginx --no-cache
 	docker compose up -d --force-recreate --remove-orphans nginx
 
 push: ## Push docker image

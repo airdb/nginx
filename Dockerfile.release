@@ -26,4 +26,6 @@ WORKDIR /etc/lua/lib/
 RUN git clone --depth=1 -b master https://github.com/ledgetech/lua-resty-http  && \
         git clone --depth=1 -b master https://github.com/openresty/lua-resty-dns
 
+RUN cp /etc/lua/lib/lua-resty-http/lib/resty/* /etc/nginx/lualib/resty/
+
 CMD ["nginx", "-g", "daemon off;"]
