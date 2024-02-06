@@ -13,7 +13,8 @@ help: ## Show help messages
 	@sed -n '/##/s/\(.*\):.*##/  \1#/p' ${MAKEFILE_LIST} | grep -v "MAKEFILE_LIST" | column -t -c 2 -s '#'
 
 build: ## Build or rebuild docker image
-	docker compose --progress=plain build ${SERVICE} --no-cache
+	docker compose --progress=plain build ${SERVICE}-builder
+	#docker compose --progress=plain build ${SERVICE}-builder --no-cache
 	#docker compose --progress=plain build nginx-builder --no-cache
 	#docker compose build --no-cache --progress=plain
 

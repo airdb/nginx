@@ -2,12 +2,13 @@ version: '3'
 
 services:
   nginx-builder:
+    image: 'airdb/nginx-builder:latest'
     container_name: nginx-builder
     platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
-    image: 'airdb/nginx-builer:latest'
+      target: builder
     working_dir: /srv
     volumes:
       - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -18,13 +19,15 @@ services:
       - TZ=Asia/Shanghai
     ports:
       - 8080:80
+
   nginx:
+    image: 'airdb/nginx:latest'
     container_name: nginx
     platform: linux/amd64
     build:
       context: .
-      dockerfile: Dockerfile.release
-    image: 'airdb/nginx:latest'
+      dockerfile: Dockerfile
+      target: release
     working_dir: /srv
     volumes:
       - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
