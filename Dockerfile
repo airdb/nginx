@@ -45,9 +45,9 @@ RUN git clone --depth=1 -b master https://github.com/ledgetech/lua-resty-http  &
 COPY openresty_1.25.3.1_nginx.patch  /build/nginx-ssl-fingerprint/patches/openresty_1.25.3.1_nginx.patch
 
 COPY build.bash /tmp/
-#RUN bash /tmp/build.bash
-CMD ["nginx", "-g", "daemon off;"]
-#CMD sleep 3600
+RUN bash /tmp/build.bash
+#CMD ["nginx", "-g", "daemon off;"]
+CMD sleep 3600
 #
 
 

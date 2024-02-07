@@ -1,8 +1,8 @@
 # LABEL Maintainer="airdb team <info@airdb.com>"
 # Description="https://github.com/airdb"
 
-#SERVICE := nginx-builder
 SERVICE := nginx
+SERVICE := nginx-builder
 
 help: ## Show help messages
 	@echo "Container - ${SERVICE} "
@@ -13,14 +13,14 @@ help: ## Show help messages
 	@sed -n '/##/s/\(.*\):.*##/  \1#/p' ${MAKEFILE_LIST} | grep -v "MAKEFILE_LIST" | column -t -c 2 -s '#'
 
 build: ## Build or rebuild docker image
-	docker compose --progress=plain build ${SERVICE}-builder
+	docker compose --progress=plain build ${SERVICE}
 	#docker compose --progress=plain build ${SERVICE}-builder --no-cache
 	#docker compose --progress=plain build nginx-builder --no-cache
 	#docker compose build --no-cache --progress=plain
 
 up: ## Create and start containers
 	#docker compose up -d --force-recreate --remove-orphans ${SERVICE}
-	docker compose up -d --force-recreate --remove-orphans nginx
+	docker compose up -d --force-recreate --remove-orphans ${SERVICE}
 
 start: ## Start services
 	docker compose start
